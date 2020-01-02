@@ -74,7 +74,8 @@ public class ProductController {
 
         if (productAdded == null)
             return ResponseEntity.noContent().build();
-
+        /*if (productAdded.getPrixAchat() == null)
+            return ResponseEntity.noContent().build();*/
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -119,7 +120,7 @@ public class ProductController {
         return productsSorted;
     }
 
-    //Pour calculer la marge d'un produit( prix de vente - prix d'achat
+    //Pour calculer la marge d'un produit donné par son id( prix de vente - prix d'achat
     @GetMapping(value = "test/produits/marge/{id}")
     public String  calculerMargeProduit(@PathVariable int id) {
         Product product = productDao.findById(id);
@@ -129,5 +130,17 @@ public class ProductController {
         int marge = product.getPrix()-product.getPrixAchat();
         System.out.println(marge);
         return "la marge de "+product.getNom()+" est de "+ marge;
+    }
+
+    //Pour calculer la marge de tous les produits
+    @GetMapping(value = "/adminProduits")
+    public String  calculerMargeProduits() {
+        List<Product> products = productDao.findAll();
+        String marges ="";
+        for(Product p:products) {
+            int marge = p.getPrix() - p.getPrixAchat();
+            marges += p.toString() + " : marge " + marge +System.lineSeparator() ;
+        }
+        return marges;
     }
 }
