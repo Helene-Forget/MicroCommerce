@@ -2,6 +2,8 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.Dao.ProductDao;
 import com.ecommerce.microcommerce.Model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
+
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -115,5 +117,17 @@ public class ProductController {
     public List<Product> trierProduitsParOrdreAlphabetique() {
         List<Product> productsSorted = productDao.findByOrderByNomDesc();
         return productsSorted;
+    }
+
+    //Pour calculer la marge d'un produit( prix de vente - prix d'achat
+    @GetMapping(value = "test/produits/marge/{id}")
+    public String  calculerMargeProduit(@PathVariable int id) {
+        Product product = productDao.findById(id);
+        if(product == null){
+            throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est INTROUVABLE. ");
+        }
+        int marge = product.getPrix()-product.getPrixAchat();
+        System.out.println(marge);
+        return "la marge de "+product.getNom()+" est de "+ marge;
     }
 }
