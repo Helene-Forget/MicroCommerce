@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.Dao.ProductDao;
 import com.ecommerce.microcommerce.Model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -74,8 +75,8 @@ public class ProductController {
 
         if (productAdded == null)
             return ResponseEntity.noContent().build();
-        /*if (productAdded.getPrixAchat() == null)
-            return ResponseEntity.noContent().build();*/
+        if (productAdded.getPrixAchat() == 0)
+            throw new ProduitGratuitException("Ce Produit est Gratuit????");
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
